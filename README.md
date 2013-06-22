@@ -1,13 +1,16 @@
-HakkyHour
+Sample Project Showing Spring, Akka and Camel working together
 =========
-
-This project is part of the course materials for the Akka training courses from Typesafe. Each successive commit corresponds to an exercise in the slide deck, i.e. it is possible to jump on at any given stage.
 
 To run this from the command prompt with maven use:
 
 mvn install exec:java -DskipTests
 
-Copyright
----------
+Then in your browser go to:
+http://localhost:8875/
 
-Unless otherwise agreed, training materials may only be used for educational and reference purposes by individual named participants in a training course offered by Typesafe or a Typesafe training partner. Unauthorized reproduction, redistribution, or use of this material is prohibited.
+Notice how the word Akka (not the image) has been replaced with SUPER AKKA along with the count of the times the web page has been hit.
+
+At the command line the following options are available:
+m 'new message'   #set a new message that is used to replace the word Akka.
+c                 #get a count of how many times the web page has been hit
+q                 #quit
