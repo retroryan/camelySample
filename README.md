@@ -1,4 +1,4 @@
-Sample Project Showing Spring, Akka and Camel working together
+Sample showing Spring, Akka and Camel working together
 =========
 
 To run this from the command prompt with maven use:
