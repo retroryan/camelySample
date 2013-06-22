@@ -1,0 +1,32 @@
+#maven
+target/
+
+# sbt
+boot/
+lib_managed/
+target/
+.history
+
+# Eclipse
+.cache
+.classpath
+.project
+.scala_dependencies
+.settings
+.target/
+.worksheet/
+eclipse.sbt
+
+# IntelliJ
+.idea/
+.idea_modules/
+*.iml
+*.ipr
+*.iws
+out/
+
+# TextMate
+*.tmproj
+
+# Mac
+.DS_Store
