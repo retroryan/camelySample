@@ -1,9 +1,10 @@
 package camely;
 
 import akka.actor.UntypedActor;
+import org.springframework.context.annotation.Scope;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.springframework.context.annotation.Scope;
 
 /**
  * An actor that can count using an injected CountingService.
@@ -13,29 +14,32 @@ import org.springframework.context.annotation.Scope;
  */
 @Named("CountingActor")
 @Scope("prototype")
-class CountingActor extends UntypedActor {
+public class CountingActor extends UntypedActor {
 
-  public static class Count {}
-  public static class Get {}
-
-  // the service that will be automatically injected
-  final CountingService countingService;
-
-  @Inject
-  public CountingActor(@Named("CountingService") CountingService countingService) {
-    this.countingService = countingService;
-  }
-
-  private long count = 0;
-
-  @Override
-  public void onReceive(Object message) throws Exception {
-    if (message instanceof Count) {
-      count = countingService.increment();
-    } else if (message instanceof Get) {
-      getSender().tell(count, getSelf());
-    } else {
-      unhandled(message);
+    public static class Count {
     }
-  }
+
+    public static class Get {
+    }
+
+    // the service that will be automatically injected
+    final CountingService countingService;
+
+    @Inject
+    public CountingActor(@Named("CountingService") CountingService countingService) {
+        this.countingService = countingService;
+    }
+
+    private long count = 0;
+
+    @Override
+    public void onReceive(Object message) throws Exception {
+        if (message instanceof Count) {
+            count = countingService.increment();
+        } else if (message instanceof Get) {
+            getSender().tell(count, getSelf());
+        } else {
+            unhandled(message);
+        }
+    }
 }

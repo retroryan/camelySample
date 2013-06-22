@@ -1,25 +1,20 @@
 package camely;
 
 
-import akka.actor.*;
-import akka.util.Timeout;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import camely.camelHttp.HttpConsumer;
 import camely.camelHttp.HttpProducer;
-import camely.camelHttp.HttpTransformer;
-import com.typesafe.config.Config;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.FiniteDuration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static akka.pattern.Patterns.ask;
+
 import static camely.SpringExtension.SpringExtProvider;
 
 public class CamelyApp {
@@ -58,34 +53,10 @@ public class CamelyApp {
         CountingService countingService = ctx.getBean(CountingService.class);
         try {
             commandLoop(countingService, messageReplacementService);
-        }
-        finally {
-            system.shutdown();
-            system.awaitTermination();
-        }
-
-        // tell it to count three times
-/*
-        counter.tell(new CountingActor.Count(), null);
-        counter.tell(new CountingActor.Count(), null);
-        counter.tell(new CountingActor.Count(), null);
-*/
-
-        // print the result
-/*
-        FiniteDuration duration = FiniteDuration.create(3, TimeUnit.SECONDS);
-        Future<Object> result = ask(counter, new CountingActor.Get(),
-                Timeout.durationToTimeout(duration));
-        try {
-            System.out.println("Got back " + Await.result(result, duration));
-        } catch (Exception e) {
-            System.err.println("Failed getting result: " + e.getMessage());
-            throw e;
         } finally {
             system.shutdown();
             system.awaitTermination();
         }
-*/
     }
 
     protected void commandLoop(CountingService countingService, MessageReplacementService messageReplacementService) throws IOException {
