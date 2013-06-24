@@ -10,7 +10,7 @@ import javax.inject.Named;
  * An actor that can count using an injected CountingService.
  *
  * @note The scope here is prototype since we want to create a new actor
- * instance for use of this bean.
+ * instance for each use of this bean.
  */
 @Named("CountingActor")
 @Scope("prototype")

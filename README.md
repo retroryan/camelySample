@@ -14,3 +14,6 @@ At the command line the following options are available:
 * m 'new message'   #set a new message that is used to replace the word Akka.
 * c                 #get a count of how many times the web page has been hit
 * q                 #quit
+
+
+The Spring Extension and Spring Actor Producer where originally written by Björn Antonsson @bantonsson

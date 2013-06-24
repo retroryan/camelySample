@@ -30,22 +30,17 @@ public class HttpTransformer extends UntypedActor {
     final MessageReplacementService messageReplacementService;
 
     @Inject
-    public HttpTransformer(@Named("MessageReplacementService") MessageReplacementService messageReplacementService) {
+    //the actual spring bean for the counting actor is the actual Actor and not the ref.
+    //And because we need the actor ref and not the actual actor, we have to manually pass in the parameters to the constructor.
+    public HttpTransformer(@Named("MessageReplacementService") MessageReplacementService messageReplacementService,
+                           ActorRef countingActor) {
         this.messageReplacementService = messageReplacementService;
-
-        ActorSelection actorSelection = context().actorSelection("/user/counter");
-        actorSelection.tell(new Identify(countingActorCorrelationId), self());
+        this.countingActor = countingActor;
     }
 
 
     public void onReceive(Object message) {
-        if (message instanceof ActorIdentity) {
-            ActorIdentity actorIdentity = (ActorIdentity) message;
-            Integer correlationId = (Integer) actorIdentity.correlationId();
-            if (correlationId == countingActorCorrelationId) {
-                countingActor = actorIdentity.getRef();
-            }
-        } else if (message instanceof CamelMessage) {
+        if (message instanceof CamelMessage) {
             FiniteDuration duration = FiniteDuration.create(3, TimeUnit.SECONDS);
             Future<Object> result = ask(countingActor, new CountingActor.Get(), Timeout.durationToTimeout(duration));
             long currentCount = -1;

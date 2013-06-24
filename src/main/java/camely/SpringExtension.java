@@ -8,6 +8,8 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * An Akka Extension to provide access to Spring managed Actor Beans.
+ *
+ * Copied from Björn Antonsson @bantonsson
  */
 public class SpringExtension extends
   AbstractExtensionId<SpringExtension.SpringExt> {
@@ -47,9 +49,9 @@ public class SpringExtension extends
      * @param actorBeanName  The name of the actor bean to create Props for
      * @return a Props that will create the named actor bean using Spring
      */
-    public Props props(String actorBeanName) {
+    public Props props(String actorBeanName, Object... arguments) {
       return Props.create(SpringActorProducer.class,
-        applicationContext, actorBeanName);
+        applicationContext, actorBeanName, arguments);
     }
   }
 }

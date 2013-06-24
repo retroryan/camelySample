@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static akka.pattern.Patterns.ask;
 
 import static camely.SpringExtension.SpringExtProvider;
 
@@ -43,13 +42,18 @@ public class CamelyApp {
         ActorRef counter = system.actorOf(
                 SpringExtProvider.get(system).props("CountingActor"), "counter");
 
+
+        //Because we are passing the actor ref, the other bean properties don't get looked up by Spring.  Not sure how to mix
+        //passing constructor args with bean injection?
+        MessageReplacementService messageReplacementService = ctx.getBean(MessageReplacementService.class);
         ActorRef httpTransformer = system.actorOf(
-                SpringExtProvider.get(system).props("HttpTransformer"), "httpTransformer");
+                SpringExtProvider.get(system).props("HttpTransformer", messageReplacementService, counter), "httpTransformer");
 
         final ActorRef httpProducer = system.actorOf(HttpProducer.mkProps(httpTransformer));
+
+        //the consumer is what actually listens for the http requests
         final ActorRef httpConsumer = system.actorOf(HttpConsumer.mkProps(httpProducer));
 
-        MessageReplacementService messageReplacementService = ctx.getBean(MessageReplacementService.class);
         CountingService countingService = ctx.getBean(CountingService.class);
         try {
             commandLoop(countingService, messageReplacementService);

@@ -4,7 +4,7 @@ import javax.inject.Named;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * A simple service that keeps a counter.
+ * A simple spring service get and set the default replacement message.
  */
 @Named("MessageReplacementService")
 public class MessageReplacementService {
