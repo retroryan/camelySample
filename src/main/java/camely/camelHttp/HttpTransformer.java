@@ -41,28 +41,17 @@ public class HttpTransformer extends UntypedActor {
 
     public void onReceive(Object message) {
         if (message instanceof CamelMessage) {
+
             FiniteDuration duration = FiniteDuration.create(3, TimeUnit.SECONDS);
             Future<Object> result = ask(countingActor, new CountingActor.Get(), Timeout.durationToTimeout(duration));
-            long currentCount = -1;
+
             try {
-                currentCount = (Long) Await.result(result, duration);
+                long currentCount = (Long) Await.result(result, duration);
+                transformCamelMessage((CamelMessage) message, currentCount);
             } catch (Exception e) {
                 System.err.println("Failed getting result: " + e.getMessage());
+                transformCamelMessage((CamelMessage) message, -1);
             }
-
-            CamelMessage camelMessage = (CamelMessage) message;
-            final long finalCurrentCount = currentCount;
-
-            CamelMessage replacedMessage =
-                    camelMessage.mapBody(new Mapper<Object, String>() {
-                        @Override
-                        public String apply(Object body) {
-                            String text = new String((byte[]) body);
-                            String newMessage = messageReplacementService.getReplacementMessage() + "[" + finalCurrentCount + "] ";
-                            return text.replaceAll("Akka ", newMessage);
-                        }
-                    });
-            getSender().tell(replacedMessage, getSelf());
 
             countingActor.tell(new CountingActor.Count(), self());
 
@@ -70,6 +59,20 @@ public class HttpTransformer extends UntypedActor {
             getSender().tell(message, getSelf());
         } else
             unhandled(message);
+    }
+
+    private void transformCamelMessage(CamelMessage camelMessage, final long currentCount) {
+
+        CamelMessage replacedMessage =
+                camelMessage.mapBody(new Mapper<Object, String>() {
+                    @Override
+                    public String apply(Object body) {
+                        String text = new String((byte[]) body);
+                        String newMessage = messageReplacementService.getReplacementMessage() + "[" + currentCount + "] ";
+                        return text.replaceAll("Akka ", newMessage);
+                    }
+                });
+        getSender().tell(replacedMessage, getSelf());
     }
 }
 //#HttpExample
